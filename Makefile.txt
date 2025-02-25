@@ -1,0 +1,53 @@
+# ======================== Project Configuration ========================
+
+# Directories
+SRC_DIR = src
+OBJ_DIR = objects
+BIN_DIR = bin
+
+# Application Name
+APP = my_app
+
+# Compiler and Flags
+CXX = g++
+CXXFLAGS = -Wall -Wextra -std=c++17
+LDFLAGS = 
+
+# ======================== Source and Object Files ========================
+
+# Automatically find all .cpp files in src/ and create object files for them
+SRC = $(wildcard $(SRC_DIR)/*.cpp)
+OBJ = $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
+OUT = $(BIN_DIR)/$(APP)
+
+# ======================== Build Rules ========================
+
+# Default target: Build everything
+all: $(OUT)
+
+# Link all object files into the final executable
+$(OUT): $(OBJ) | $(BIN_DIR)
+	$(CXX) $(OBJ) -o $(OUT) $(LDFLAGS)
+
+# Compile .cpp files into .o files
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Create necessary directories if they don't exist
+$(OBJ_DIR):
+	@mkdir -p $(OBJ_DIR)
+
+$(BIN_DIR):
+	@mkdir -p $(BIN_DIR)
+
+# Run the application
+run: $(OUT)
+	@clear
+	@$(OUT)
+
+# Clean compiled files
+clean:
+	@rm -rf $(OBJ_DIR) $(BIN_DIR)
+
+# Phony targets (not actual files)
+.PHONY: all run clean
